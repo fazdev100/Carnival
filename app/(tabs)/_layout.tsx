@@ -1,7 +1,8 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppTheme } from '../../hooks/useAppTheme';
-import { Typography } from '../../components/Typography';
+import { Platform } from 'react-native';
+import { touchTargets } from '../../constants/theme';
 
 export default function TabLayout() {
   const { colors } = useAppTheme();
@@ -14,28 +15,36 @@ export default function TabLayout() {
           backgroundColor: colors.background,
           borderTopColor: colors.border,
           borderTopWidth: 1,
-          elevation: 0,
-          shadowOpacity: 0,
+          height: Platform.OS === 'ios' ? 88 : 60,
+          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
+          paddingTop: 8,
         },
-        tabBarActiveTintColor: colors.accent,
-        tabBarInactiveTintColor: colors.secondary,
-        tabBarLabel: ({ color, children }) => (
-          <Typography
-            variant="caption"
-            weight="semibold"
-            color={color}
-            style={{ marginBottom: 4 }}
-          >
-            {children}
-          </Typography>
-        ),
+        tabBarActiveTintColor: colors.interactive.primary,
+        tabBarInactiveTintColor: colors.icon.secondary,
+        tabBarItemStyle: {
+          minHeight: touchTargets.minimum,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+          marginTop: 4,
+        },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
           tabBarIcon: ({ size, color }) => (
-            <Ionicons name="home" size={24} color={color} />
+            <Ionicons 
+              name="home" 
+              size={touchTargets.icon.medium} 
+              color={color}
+              style={{
+                textShadowColor: 'rgba(0, 0, 0, 0.75)',
+                textShadowOffset: { width: 0, height: 1 },
+                textShadowRadius: 2,
+              }}
+            />
           ),
         }}
       />
@@ -44,7 +53,16 @@ export default function TabLayout() {
         options={{
           title: 'Discover',
           tabBarIcon: ({ size, color }) => (
-            <Ionicons name="compass" size={24} color={color} />
+            <Ionicons 
+              name="compass" 
+              size={touchTargets.icon.medium} 
+              color={color}
+              style={{
+                textShadowColor: 'rgba(0, 0, 0, 0.75)',
+                textShadowOffset: { width: 0, height: 1 },
+                textShadowRadius: 2,
+              }}
+            />
           ),
         }}
       />
@@ -53,19 +71,20 @@ export default function TabLayout() {
         options={{
           title: 'Saved',
           tabBarIcon: ({ size, color }) => (
-            <Ionicons name="bookmark" size={24} color={color} />
+            <Ionicons 
+              name="bookmark" 
+              size={touchTargets.icon.medium} 
+              color={color}
+              style={{
+                textShadowColor: 'rgba(0, 0, 0, 0.75)',
+                textShadowOffset: { width: 0, height: 1 },
+                textShadowRadius: 2,
+              }}
+            />
           ),
         }}
       />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ size, color }) => (
-            <Ionicons name="person" size={24} color={color} />
-          ),
-        }}
-      />
+     
     </Tabs>
   );
 }

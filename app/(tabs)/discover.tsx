@@ -1,10 +1,11 @@
 import { useState, useRef, useCallback } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, useColorScheme, Dimensions, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Dimensions, FlatList, Image, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Video } from 'expo-av';
-import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetModalProvider, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { useAppTheme } from '../../hooks/useAppTheme';
 
 const { width, height } = Dimensions.get('window');
 
@@ -79,7 +80,8 @@ const dummyArticles = [
     type: 'article'
   }
 ];
-const dummyPodcasts =  [
+
+const dummyPodcasts = [
   {
     id: '1',
     brand: 'PEOPLE',
@@ -118,10 +120,8 @@ const dummyPodcasts =  [
   }
 ];
 
-
 export default function DiscoverScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { colors, touchTargets, shadows } = useAppTheme();
   const [activeTab, setActiveTab] = useState('videos');
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [newComment, setNewComment] = useState('');
@@ -135,7 +135,6 @@ export default function DiscoverScreen() {
       const newIndex = viewableItems[0].index;
       setActiveVideoIndex(newIndex);
       
-      // Pause all videos except the active one
       Object.entries(videoRefs.current).forEach(([id, ref]) => {
         if (id !== viewableItems[0].item.id) {
           ref?.pauseAsync();
@@ -207,93 +206,125 @@ export default function DiscoverScreen() {
         shouldPlay={index === activeVideoIndex}
         isMuted={false}
       />
-      <View style={styles.videoOverlay}>
+      <View style={[styles.videoOverlay, { backgroundColor: colors.overlay.dark }]}>
         <View style={styles.videoInfo}>
-          <Text style={styles.videoTitle}>{item.title}</Text>
-          <Text style={styles.videoDescription}>{item.description}</Text>
+          <Text style={[styles.videoTitle, { color: colors.text }]}>{item.title}</Text>
+          <Text style={[styles.videoDescription, { color: colors.text }]}>{item.description}</Text>
         </View>
         <View style={styles.interactionButtons}>
           <TouchableOpacity 
-            style={styles.interactionButton}
+            style={[styles.interactionButton, { minHeight: touchTargets.minimum }]}
             onPress={() => handleLike(item.id)}
           >
             <Ionicons 
               name={item.isLiked ? "heart" : "heart-outline"} 
-              size={28} 
-              color={item.isLiked ? "#FF3B30" : "#FFFFFF"} 
+              size={touchTargets.icon.large} 
+              color={item.isLiked ? colors.interactive.primary : colors.icon.primary}
+              style={styles.iconShadow}
             />
-            <Text style={styles.interactionText}>{item.likes}</Text>
+            <Text style={[styles.interactionText, { color: colors.text }]}>{item.likes}</Text>
           </TouchableOpacity>
           <TouchableOpacity 
-            style={styles.interactionButton} 
+            style={[styles.interactionButton, { minHeight: touchTargets.minimum }]}
             onPress={() => handleComment(item.id)}
           >
-            <Ionicons name="chatbubble" size={26} color="#FFFFFF" />
-            <Text style={styles.interactionText}>{item.comments.length}</Text>
+            <Ionicons 
+              name="chatbubble" 
+              size={touchTargets.icon.medium} 
+              color={colors.icon.primary}
+              style={styles.iconShadow}
+            />
+            <Text style={[styles.interactionText, { color: colors.text }]}>{item.comments.length}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.interactionButton}>
-            <Ionicons name="share-social" size={26} color="#FFFFFF" />
+          <TouchableOpacity style={[styles.interactionButton, { minHeight: touchTargets.minimum }]}>
+            <Ionicons 
+              name="share-social" 
+              size={touchTargets.icon.medium} 
+              color={colors.icon.primary}
+              style={styles.iconShadow}
+            />
           </TouchableOpacity>
         </View>
       </View>
     </View>
-  ), [activeVideoIndex, handleLike, handleComment]);
+  ), [activeVideoIndex, handleLike, handleComment, colors, touchTargets]);
 
   const renderArticle = useCallback(({ item }) => (
-    <View style={[styles.articleCard, isDark && styles.articleCardDark]}>
+    <View style={[styles.articleCard, { backgroundColor: colors.card }]}>
       <Image source={{ uri: item.image }} style={styles.articleImage} />
       <View style={styles.articleContent}>
-        <Text style={[styles.articleTitle, isDark && styles.textDark]}>{item.title}</Text>
-        <Text style={styles.articleAuthor}>By {item.author}</Text>
+        <Text style={[styles.articleTitle, { color: colors.text }]}>{item.title}</Text>
+        <Text style={[styles.articleAuthor, { color: colors.textSecondary }]}>By {item.author}</Text>
         <View style={styles.articleMeta}>
-          <Text style={styles.articleCategory}>{item.category}</Text>
-          <Text style={styles.articleReadTime}>{item.readTime}</Text>
+          <Text style={[styles.articleCategory, { color: colors.interactive.primary }]}>{item.category}</Text>
+          <Text style={[styles.articleReadTime, { color: colors.textSecondary }]}>{item.readTime}</Text>
         </View>
       </View>
     </View>
-  ), [isDark]);
+  ), [colors]);
 
   const renderPodcast = useCallback(({ item }) => (
-    <View style={[styles.podcastCard, isDark && styles.podcastCardDark]}>
+    <View style={[styles.podcastCard, { backgroundColor: colors.card }]}>
       <Image source={{ uri: item.coverImage }} style={styles.podcastCover} />
       <View style={styles.podcastContent}>
-        <Text style={[styles.podcastTitle, isDark && styles.textDark]}>{item.title}</Text>
-        <Text style={styles.podcastHost}>Hosted by {item.host}</Text>
+        <Text style={[styles.podcastTitle, { color: colors.text }]}>{item.title}</Text>
+        <Text style={[styles.podcastHost, { color: colors.textSecondary }]}>Hosted by {item.host}</Text>
         <View style={styles.podcastMeta}>
-          <Text style={styles.podcastDuration}>{item.duration}</Text>
-          <Text style={styles.podcastEpisode}>{item.latestEpisode}</Text>
+          <Text style={[styles.podcastDuration, { color: colors.textSecondary }]}>{item.duration}</Text>
+          <Text style={[styles.podcastEpisode, { color: colors.interactive.primary }]}>{item.latestEpisode}</Text>
         </View>
       </View>
     </View>
-  ), [isDark]);
+  ), [colors]);
 
   return (
     <BottomSheetModalProvider>
-      <SafeAreaView style={[styles.container, isDark && styles.containerDark]}>
-        <View style={styles.header}>
-          <Text style={[styles.title, isDark && styles.textDark]}>DISCOVER</Text>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={[styles.header, { backgroundColor: colors.background }]}>
+          <Text style={[styles.title, { color: colors.text }]}>DISCOVER</Text>
           <View style={styles.tabsContainer}>
             <TouchableOpacity
               onPress={() => setActiveTab('videos')}
-              style={[styles.tab, activeTab === 'videos' && styles.activeTab]}
+              style={[
+                styles.tab,
+                activeTab === 'videos' && { backgroundColor: colors.interactive.primary },
+                { minHeight: touchTargets.minimum }
+              ]}
             >
-              <Text style={[styles.tabText, activeTab === 'videos' && styles.activeTabText]}>
+              <Text style={[
+                styles.tabText,
+                { color: activeTab === 'videos' ? colors.text : colors.textSecondary }
+              ]}>
                 VIDEOS
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setActiveTab('articles')}
-              style={[styles.tab, activeTab === 'articles' && styles.activeTab]}
+              style={[
+                styles.tab,
+                activeTab === 'articles' && { backgroundColor: colors.interactive.primary },
+                { minHeight: touchTargets.minimum }
+              ]}
             >
-              <Text style={[styles.tabText, activeTab === 'articles' && styles.activeTabText]}>
+              <Text style={[
+                styles.tabText,
+                { color: activeTab === 'articles' ? colors.text : colors.textSecondary }
+              ]}>
                 ARTICLES
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setActiveTab('podcasts')}
-              style={[styles.tab, activeTab === 'podcasts' && styles.activeTab]}
+              style={[
+                styles.tab,
+                activeTab === 'podcasts' && { backgroundColor: colors.interactive.primary },
+                { minHeight: touchTargets.minimum }
+              ]}
             >
-              <Text style={[styles.tabText, activeTab === 'podcasts' && styles.activeTabText]}>
+              <Text style={[
+                styles.tabText,
+                { color: activeTab === 'podcasts' ? colors.text : colors.textSecondary }
+              ]}>
                 PODCASTS
               </Text>
             </TouchableOpacity>
@@ -338,39 +369,46 @@ export default function DiscoverScreen() {
           index={0}
           snapPoints={['50%']}
           enablePanDownToClose={true}
-          backgroundStyle={[styles.bottomSheet, isDark && styles.bottomSheetDark]}
+          backdropComponent={BottomSheetBackdrop}
+          backgroundStyle={[styles.bottomSheet, { backgroundColor: colors.card }]}
         >
           <View style={styles.commentsContainer}>
-            <Text style={[styles.commentsTitle, isDark && styles.textDark]}>COMMENTS</Text>
+            <Text style={[styles.commentsTitle, { color: colors.text }]}>COMMENTS</Text>
             <FlatList
               data={selectedVideo?.comments || []}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <View style={styles.commentItem}>
-                  <Text style={styles.commentUser}>{item.user}</Text>
-                  <Text style={styles.commentText}>{item.text}</Text>
+                <View style={[styles.commentItem, { backgroundColor: colors.interactive.background }]}>
+                  <Text style={[styles.commentUser, { color: colors.text }]}>{item.user}</Text>
+                  <Text style={[styles.commentText, { color: colors.textSecondary }]}>{item.text}</Text>
                   <View style={styles.commentMeta}>
-                    <TouchableOpacity>
-                      <Text style={styles.commentLikes}>{item.likes} likes</Text>
+                    <TouchableOpacity style={{ minHeight: touchTargets.minimum }}>
+                      <Text style={[styles.commentLikes, { color: colors.textSecondary }]}>
+                        {item.likes} likes
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
               )}
               style={styles.commentsList}
             />
-            <View style={styles.commentInput}>
+            <View style={[styles.commentInput, { borderTopColor: colors.border }]}>
               <TextInput
-                style={styles.input}
+                style={[styles.input, { 
+                  backgroundColor: colors.interactive.background,
+                  color: colors.text,
+                  minHeight: touchTargets.minimum
+                }]}
                 value={newComment}
                 onChangeText={setNewComment}
                 placeholder="Add a comment..."
-                placeholderTextColor="#999"
+                placeholderTextColor={colors.textSecondary}
               />
               <TouchableOpacity 
-                style={styles.submitButton}
+                style={[styles.submitButton, { backgroundColor: colors.interactive.primary }]}
                 onPress={submitComment}
               >
-                <Text style={styles.submitButtonText}>Post</Text>
+                <Text style={[styles.submitButtonText, { color: colors.text }]}>Post</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -383,21 +421,14 @@ export default function DiscoverScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  containerDark: {
-    backgroundColor: '#000000',
   },
   header: {
     paddingHorizontal: 20,
     paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
   },
   title: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#000000',
     marginBottom: 20,
   },
   tabsContainer: {
@@ -409,18 +440,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginRight: 15,
     borderRadius: 20,
-    backgroundColor: '#F5F5F5',
-  },
-  activeTab: {
-    backgroundColor: '#E31837',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   tabText: {
-    fontSize: 14,
     fontWeight: '600',
-    color: '#666666',
-  },
-  activeTabText: {
-    color: '#FFFFFF',
+    fontSize: 14,
   },
   videoContainer: {
     width: width,
@@ -435,20 +460,17 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'space-between',
     padding: 20,
-    backgroundColor: 'rgba(0,0,0,0.3)',
   },
   videoInfo: {
     marginTop: 'auto',
     marginBottom: 100,
   },
   videoTitle: {
-    color: '#FFFFFF',
     fontSize: 24,
     fontWeight: '700',
     marginBottom: 8,
   },
   videoDescription: {
-    color: '#FFFFFF',
     fontSize: 16,
     marginBottom: 16,
   },
@@ -460,19 +482,20 @@ const styles = StyleSheet.create({
   interactionButton: {
     alignItems: 'center',
     marginBottom: 20,
+    padding: 8,
   },
   interactionText: {
-    color: '#FFFFFF',
     marginTop: 4,
     fontSize: 12,
   },
+  iconShadow: {
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
   bottomSheet: {
-    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-  },
-  bottomSheetDark: {
-    backgroundColor: '#1C1C1E',
   },
   commentsContainer: {
     flex: 1,
@@ -482,7 +505,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 20,
-    color: '#000000',
   },
   commentsList: {
     flex: 1,
@@ -491,7 +513,6 @@ const styles = StyleSheet.create({
   commentItem: {
     marginBottom: 15,
     padding: 10,
-    backgroundColor: '#F5F5F5',
     borderRadius: 8,
   },
   commentUser: {
@@ -499,8 +520,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   commentText: {
-    fontSize: 14,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   commentMeta: {
     flexDirection: 'row',
@@ -508,41 +528,28 @@ const styles = StyleSheet.create({
   },
   commentLikes: {
     fontSize: 12,
-    color: '#666666',
   },
   commentInput: {
     flexDirection: 'row',
-    alignItems: 'center',
+    padding: 10,
     borderTopWidth: 1,
-    borderTopColor: '#E5E5E5',
-    paddingTop: 10,
   },
   input: {
     flex: 1,
-    height: 40,
-    backgroundColor: '#F5F5F5',
+    padding: 10,
     borderRadius: 20,
-    paddingHorizontal: 15,
     marginRight: 10,
   },
   submitButton: {
-    backgroundColor: '#E31837',
+    justifyContent: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 10,
     borderRadius: 20,
+    minHeight: 44,
   },
   submitButtonText: {
-    color: '#FFFFFF',
     fontWeight: '600',
   },
-  textDark: {
-    color: '#FFFFFF',
-  },
-  contentContainer: {
-    padding: 20,
-  },
   articleCard: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     marginBottom: 20,
     shadowColor: '#000000',
@@ -550,9 +557,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-  },
-  articleCardDark: {
-    backgroundColor: '#1C1C1E',
   },
   articleImage: {
     width: '100%',
@@ -570,7 +574,6 @@ const styles = StyleSheet.create({
   },
   articleAuthor: {
     fontSize: 14,
-    color: '#666666',
     marginBottom: 8,
   },
   articleMeta: {
@@ -579,15 +582,12 @@ const styles = StyleSheet.create({
   },
   articleCategory: {
     fontSize: 12,
-    color: '#E31837',
     fontWeight: '600',
   },
   articleReadTime: {
     fontSize: 12,
-    color: '#666666',
   },
   podcastCard: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     marginBottom: 20,
     shadowColor: '#000000',
@@ -595,9 +595,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-  },
-  podcastCardDark: {
-    backgroundColor: '#1C1C1E',
   },
   podcastCover: {
     width: '100%',
@@ -615,7 +612,6 @@ const styles = StyleSheet.create({
   },
   podcastHost: {
     fontSize: 14,
-    color: '#666666',
     marginBottom: 8,
   },
   podcastMeta: {
@@ -625,11 +621,12 @@ const styles = StyleSheet.create({
   },
   podcastDuration: {
     fontSize: 12,
-    color: '#666666',
   },
   podcastEpisode: {
     fontSize: 12,
-    color: '#E31837',
     fontWeight: '600',
+  },
+  contentContainer: {
+    padding: 20,
   }
 });
