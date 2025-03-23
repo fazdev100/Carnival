@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, useColorScheme, Dimensions, FlatList, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, { FadeInUp } from 'react-native-reanimated';
+import Animated, { FadeInUp, withSpring } from 'react-native-reanimated';
 import { Video } from 'expo-av';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
@@ -113,27 +113,6 @@ const dummyVideos = [
         description: 'Limited edition designer handbag from the latest collection'
       }
     ]
-  },
-  {
-    id: '6',
-    url: 'https://ik.imagekit.io/o0jxqanoq/music.mp4?tr=orig&updatedAt=1740051234567',
-    title: 'Studio Session',
-    likes: 31245,
-    isLiked: false,
-    comments: [
-      { id: '1', user: 'MusicLover', text: 'Can\'t wait for the album! 🎵', likes: 88 },
-      { id: '2', user: 'Producer', text: 'Those beats are fire!', likes: 59 }
-    ],
-    description: 'Exclusive studio session with top music producer.',
-    products: [
-      {
-        id: '1',
-        name: 'Professional Studio Headphones',
-        price: '$349.99',
-        image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop',
-        description: 'Studio-quality headphones used by professional musicians'
-      }
-    ]
   }
 ];
 
@@ -225,25 +204,31 @@ export default function DiscoverScreen() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [videos, setVideos] = useState(dummyVideos);
   const videoRefs = useRef({});
+  const flatListRef = useRef(null);
 
   const onViewableItemsChanged = useCallback(({ viewableItems }) => {
     if (viewableItems?.[0]) {
       const newIndex = viewableItems[0].index;
       setActiveVideoIndex(newIndex);
       
-      // Pause all videos except the active one
+      // Pause all videos
       Object.entries(videoRefs.current).forEach(([id, ref]) => {
-        if (id !== viewableItems[0].item.id) {
-          ref?.pauseAsync();
-        } else {
-          ref?.playAsync();
-        }
+        ref?.pauseAsync();
       });
+      
+      // Play only the current video after a short delay
+      setTimeout(() => {
+        const currentRef = videoRefs.current[viewableItems[0].item.id];
+        if (currentRef) {
+          currentRef.playAsync();
+        }
+      }, 100);
     }
   }, []);
 
   const viewabilityConfig = useRef({
-    itemVisiblePercentThreshold: 50
+    itemVisiblePercentThreshold: 90,
+    minimumViewTime: 100,
   }).current;
 
   const handleLike = useCallback((videoId) => {
@@ -303,11 +288,37 @@ export default function DiscoverScreen() {
         shouldPlay={index === activeVideoIndex}
         isMuted={false}
       />
-      <View style={styles.videoOverlay}>
+      <Animated.View 
+        style={[
+          styles.videoOverlay,
+          { opacity: index === activeVideoIndex ? 1 : 0 }
+        ]}
+        entering={FadeInUp.springify()}
+      >
         <View style={styles.videoInfo}>
           <Text style={styles.videoTitle}>{item.title}</Text>
           <Text style={styles.videoDescription}>{item.description}</Text>
+          
+          {item.products?.[0] && (
+            <Animated.View 
+              entering={FadeInUp.delay(300).springify()}
+              style={styles.productCard}
+            >
+              <Image 
+                source={{ uri: item.products[0].image }} 
+                style={styles.productImage}
+              />
+              <View style={styles.productInfo}>
+                <Text style={styles.productName}>{item.products[0].name}</Text>
+                <Text style={styles.productPrice}>{item.products[0].price}</Text>
+                <TouchableOpacity style={styles.buyButton}>
+                  <Text style={styles.buyButtonText}>Buy Now</Text>
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
+          )}
         </View>
+        
         <View style={styles.interactionButtons}>
           <TouchableOpacity 
             style={styles.interactionButton}
@@ -331,7 +342,7 @@ export default function DiscoverScreen() {
             <Ionicons name="share-social" size={26} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
     </View>
   ), [activeVideoIndex, handleLike, handleComment]);
 
@@ -398,14 +409,29 @@ export default function DiscoverScreen() {
 
         {activeTab === 'videos' && (
           <FlatList
+            ref={flatListRef}
             data={videos}
             renderItem={renderVideo}
             keyExtractor={(item) => item.id}
             pagingEnabled
-            vertical
+            snapToInterval={height - 140}
+            decelerationRate="fast"
             showsVerticalScrollIndicator={false}
             onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfig={viewabilityConfig}
+            getItemLayout={(data, index) => ({
+              length: height - 140,
+              offset: (height - 140) * index,
+              index,
+            })}
+            onMomentumScrollEnd={(event) => {
+              const index = Math.floor(event.nativeEvent.contentOffset.y / (height - 140));
+              const video = videos[index];
+              if (video) {
+                const ref = videoRefs.current[video.id];
+                ref?.playAsync();
+              }
+            }}
           />
         )}
 
@@ -520,7 +546,7 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     width: width,
-    height: height,
+    height: height - 140,
     backgroundColor: '#000000',
   },
   video: {
@@ -529,29 +555,87 @@ const styles = StyleSheet.create({
   },
   videoOverlay: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     padding: 20,
+    paddingBottom: 100,
     backgroundColor: 'rgba(0,0,0,0.3)',
   },
   videoInfo: {
-    marginTop: 'auto',
-    marginBottom: 100,
+    width: '100%',
+    marginBottom: 20,
   },
   videoTitle: {
     color: '#FFFFFF',
     fontSize: 24,
     fontWeight: '700',
     marginBottom: 8,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   videoDescription: {
     color: '#FFFFFF',
     fontSize: 16,
     marginBottom: 16,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  productCard: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 16,
+    marginBottom: 16,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  productImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+  },
+  productInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  productName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 4,
+  },
+  productPrice: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#E31837',
+    marginBottom: 8,
+  },
+  buyButton: {
+    backgroundColor: '#E31837',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+  },
+  buyButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
   interactionButtons: {
     position: 'absolute',
     right: 20,
-    bottom: 100,
+    bottom: 20,
+    zIndex: 2,
   },
   interactionButton: {
     alignItems: 'center',
