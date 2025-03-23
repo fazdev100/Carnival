@@ -176,7 +176,7 @@ export default function HomeScreen() {
       <View style={[styles.header, { backgroundColor: colors.background }]}>
         <Text style={[styles.logo, { color: colors.text }]}>CARNIVAL</Text>
         <TouchableOpacity style={[styles.searchButton, { backgroundColor: colors.card }]}>
-          <Ionicons name="search" size={24} color={colors.icon} />
+          <Ionicons name="search" size={24} color={colors.icon.primary} />
         </TouchableOpacity>
       </View>
 
@@ -193,15 +193,14 @@ export default function HomeScreen() {
               onPress={() => setActiveFilter(filter)}
               style={[
                 styles.filterButton,
-                activeFilter === filter && styles.activeFilter,
-                activeFilter === filter && { backgroundColor: filter !== 'For You' ? colors.brands[filter] : colors.primary },
-                { backgroundColor: activeFilter === filter ? undefined : colors.card }
+                { backgroundColor: activeFilter === filter 
+                  ? (filter !== 'For You' ? colors.brands[filter] : colors.primary) 
+                  : 'rgba(255, 255, 255, 0.1)' }
               ]}>
               <Text
                 style={[
                   styles.filterText,
-                  activeFilter === filter && styles.activeFilterText,
-                  { color: activeFilter === filter ? colors.text : colors.secondary }
+                  { color: activeFilter === filter ? '#FFFFFF' : 'rgba(255, 255, 255, 0.9)' }
                 ]}>
                 {filter}
               </Text>
@@ -231,7 +230,7 @@ export default function HomeScreen() {
                 <Ionicons 
                   name={likedArticles.includes(article.id) ? "heart" : "heart-outline"} 
                   size={24} 
-                  color={likedArticles.includes(article.id) ? colors.primary : colors.icon} 
+                  color={likedArticles.includes(article.id) ? colors.primary : colors.icon.primary} 
                 />
               </TouchableOpacity>
             </View>
@@ -243,18 +242,18 @@ export default function HomeScreen() {
                     <Ionicons 
                       name={article.type === 'video' ? 'play-circle' : article.type === 'podcast' ? 'mic' : 'document-text'} 
                       size={16} 
-                      color={colors.secondary} 
+                      color={colors.accent} 
                     />
-                    <Text style={[styles.category, { color: colors.secondary }]}>
+                    <Text style={[styles.category, { color: colors.accent }]}>
                       {article.category}
                     </Text>
                   </View>
-                  <Text style={[styles.readTime, { color: colors.secondary }]}>
+                  <Text style={[styles.readTime, { color: colors.textSecondary }]}>
                     {article.readTime}
                   </Text>
                 </View>
                 <TouchableOpacity style={styles.shareButton}>
-                  <Ionicons name="share-outline" size={24} color={colors.icon} />
+                  <Ionicons name="share-outline" size={24} color={colors.icon.primary} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -276,7 +275,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
+    borderBottomColor: '#2A2A2A',
   },
   logo: {
     fontSize: 32,
@@ -291,7 +290,7 @@ const styles = StyleSheet.create({
   filterWrapper: {
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
+    borderBottomColor: '#2A2A2A',
   },
   filterContainer: {
     flexGrow: 0,
@@ -306,19 +305,15 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 5,
   },
-  activeFilter: {},
   filterText: {
     fontWeight: '600',
     fontSize: 14,
     letterSpacing: 0.5,
     textTransform: 'uppercase',
-  },
-  activeFilterText: {
-    color: '#FFFFFF',
   },
   contentContainer: {
     padding: 20,
@@ -328,7 +323,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 5,
     overflow: 'hidden',
@@ -361,7 +356,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 16,
     right: 16,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 20,
     padding: 8,
   },
@@ -395,6 +390,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     letterSpacing: 0.5,
     textTransform: 'uppercase',
+    fontWeight: '600',
   },
   readTime: {
     fontSize: 14,

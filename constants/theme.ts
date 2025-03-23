@@ -30,8 +30,8 @@ export const colors = {
   icon: {
     primary: '#FFFFFF',
     secondary: '#A0A0A0',
-    active: '#FF3B30'
-    //inactive: '#666666',
+    active: '#FF3B30',
+    inactive: '#666666',
   },
   
   // Overlay and backdrop colors
