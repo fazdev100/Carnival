@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInUp, withSpring } from 'react-native-reanimated';
 import { Video } from 'expo-av';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const { width, height } = Dimensions.get('window');
 
@@ -46,7 +47,7 @@ const dummyVideos = [
         id: '1', 
         name: 'Professional Chef Knife Set',
         price: '$299.99',
-        image: 'https://images.unsplash.com/photo-1593618998160-c4d5a436638b?w=800&auto=format&fit=crop',
+        image: 'https://shrigramorganics.com/wp-content/uploads/2022/06/61uUKflvFCS._SL1200_.jpg',
         description: 'Premium 8-piece knife set used by professional chefs'
       }
     ]
@@ -74,8 +75,8 @@ const dummyVideos = [
   },
   {
     id: '4',
-    url: 'https://ik.imagekit.io/o0jxqanoq/workout.mp4?tr=orig&updatedAt=1740050923145',
-    title: 'Celebrity Fitness Routine',
+    url: 'https://ik.imagekit.io/o0jxqanoq/superman.mp4?updatedAt=1740132604953',
+    title: 'Celebrity Fitness Routine with Superman',
     likes: 19876,
     isLiked: false,
     comments: [
@@ -95,7 +96,7 @@ const dummyVideos = [
   },
   {
     id: '5',
-    url: 'https://ik.imagekit.io/o0jxqanoq/fashion.mp4?tr=orig&updatedAt=1740051078912',
+    url: 'https://ik.imagekit.io/o0jxqanoq/fashion%20week.mp4?updatedAt=1740129675085',
     title: 'Fashion Week Highlights',
     likes: 27654,
     isLiked: false,
@@ -121,7 +122,7 @@ const dummyArticles = [
     id: '1',
     brand: 'PEOPLE',
     title: 'Inside the Glamorous Life of Hollywood Celebrities',
-    image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&auto=format&fit=crop',
+    image: 'https://images.ottplay.com/images/top-hollywood-1737549209.jpg?impolicy=ottplay-202501_high&width=600',
     category: 'Celebrity',
     readTime: '5 min read',
     type: 'article'
@@ -129,8 +130,8 @@ const dummyArticles = [
   {
     id: '2',
     brand: 'ENTERTAINMENT WEEKLY',
-    title: 'The Most Anticipated Movies of 2024',
-    image: 'https://images.unsplash.com/photo-1517602302552-471fe67acf66?w=800&auto=format&fit=crop',
+    title: 'The Most Anticipated Movies of 2025',
+    image: 'https://variety.com/wp-content/uploads/2024/12/MixCollage-16-Dec-2024-06-05-PM-1297.jpg?w=1000&h=667&crop=1',
     category: 'Movies',
     readTime: '7 min read',
     type: 'article'
@@ -138,8 +139,8 @@ const dummyArticles = [
   {
     id: '3',
     brand: 'INSTYLE',
-    title: 'The Ultimate Guide to Fall Fashion 2024',
-    image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&auto=format&fit=crop',
+    title: 'The Ultimate Guide to Fall Fashion 2025',
+    image: 'https://s.globalsources.com/IMAGES/skc/20240206014947494744889',
     category: 'Fashion',
     readTime: '6 min read',
     type: 'article'
@@ -147,8 +148,8 @@ const dummyArticles = [
   {
     id: '4',
     brand: 'BRIDES',
-    title: 'Top Wedding Destinations for 2024',
-    image: 'https://images.unsplash.com/photo-1521805103420-1f3b9c5c2a4f?w=800&auto=format&fit=crop',
+    title: 'Top Wedding Destinations for 2025',
+    image: 'https://media.weddingz.in/images/0d7c76d728071819720d4c4d6a0d9764/best-luxury-wedding-venues-in-jodhpur-for-a-regal-wedding-ceremony.jpg',
     category: 'Weddings',
     readTime: '6 min read',
     type: 'article'
@@ -158,39 +159,35 @@ const dummyArticles = [
 const dummyPodcasts = [
   {
     id: '1',
-    brand: 'PEOPLE',
-    title: 'Inside the Glamorous Life of Hollywood Celebrities',
-    image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&auto=format&fit=crop',
-    category: 'Celebrity',
-    readTime: '5 min read',
-    type: 'article'
+    title: 'PEOPLE Every Day',
+    host: 'Janine Rubenstein',
+    image: 'https://people.com/thmb/Cp_C1k2RXtDZO9UfVJq-CKBl80g=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():focal(599x0:601x2):format(webp)/PE_collage_11322-331d6fab33cc4b42b020ddd71b6ca159.png',
+    duration: '30 min',
+    latestEpisode: 'Latest Celebrity News & Updates'
   },
   {
     id: '2',
-    brand: 'ENTERTAINMENT WEEKLY',
-    title: 'The Most Anticipated Movies of 2024',
-    image: 'https://images.unsplash.com/photo-1517602302552-471fe67acf66?w=800&auto=format&fit=crop',
-    category: 'Movies',
-    readTime: '7 min read',
-    type: 'article'
+    title: "EW's The Awardist",
+    host: 'Gerrad Hall',
+    image: 'https://ew.com/thmb/MxAimPjEWWCSBeIAHmDiepm24OA=/318x212/filters:no_upscale():max_bytes(150000):strip_icc()/The-Awardist-13d4aa52d521425385ad1b313caea8be.jpg',
+    duration: '45 min',
+    latestEpisode: 'Awards Season Coverage'
   },
   {
     id: '3',
-    brand: 'INSTYLE',
-    title: 'The Ultimate Guide to Fall Fashion 2024',
-    image: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&auto=format&fit=crop',
-    category: 'Fashion',
-    readTime: '6 min read',
-    type: 'article'
+    title: "InStyle's The Beauty Podcast",
+    host: 'Kayla Greaves',
+    image: 'https://i.scdn.co/image/ab67656300005f1fa488567ad62513458e2e44ce',
+    duration: '25 min',
+    latestEpisode: 'Beauty Trends & Tips'
   },
   {
     id: '4',
-    brand: 'BRIDES',
-    title: 'Top Wedding Destinations for 2024',
-    image: 'https://images.unsplash.com/photo-1521805103420-1f3b9c5c2a4f?w=800&auto=format&fit=crop',
-    category: 'Weddings',
-    readTime: '6 min read',
-    type: 'article'
+    title: 'Brides Wedding Podcast',
+    host: 'Anna Price Olson',
+    image: 'https://images.prismic.io/ddhomepage/OTEyMDJiN2YtMDM0ZS00YTdjLWE2M2YtN2JmMmZiMzBmMTEx_ab40515b-baa6-48ee-bab7-bf6c3eba60b6_maincrop-8a0cd8e5545f4ff7a2a2fc6fde7c023ccopy.jpeg?auto=compress,format&rect=119,0,1188,1425&w=570&h=684&fit=clip&cs=srgb&q=65',
+    duration: '40 min',
+    latestEpisode: 'Wedding Planning Tips'
   }
 ];
 
@@ -211,12 +208,12 @@ export default function DiscoverScreen() {
       const newIndex = viewableItems[0].index;
       setActiveVideoIndex(newIndex);
       
-      // Pause all videos
       Object.entries(videoRefs.current).forEach(([id, ref]) => {
-        ref?.pauseAsync();
+        if (ref) {
+          ref.pauseAsync();
+        }
       });
       
-      // Play only the current video after a short delay
       setTimeout(() => {
         const currentRef = videoRefs.current[viewableItems[0].item.id];
         if (currentRef) {
@@ -227,9 +224,21 @@ export default function DiscoverScreen() {
   }, []);
 
   const viewabilityConfig = useRef({
-    itemVisiblePercentThreshold: 90,
-    minimumViewTime: 100,
+    itemVisiblePercentThreshold: 80,
+    minimumViewTime: 300,
   }).current;
+
+  const handleVideoPress = useCallback((videoRef) => {
+    if (videoRef) {
+      videoRef.getStatusAsync().then((status) => {
+        if (status.isPlaying) {
+          videoRef.pauseAsync();
+        } else {
+          videoRef.playAsync();
+        }
+      });
+    }
+  }, []);
 
   const handleLike = useCallback((videoId) => {
     setVideos(prevVideos => 
@@ -279,20 +288,24 @@ export default function DiscoverScreen() {
 
   const renderVideo = useCallback(({ item, index }) => (
     <View style={styles.videoContainer}>
-      <Video
-        ref={ref => videoRefs.current[item.id] = ref}
-        source={{ uri: item.url }}
-        style={styles.video}
-        resizeMode="cover"
-        isLooping
-        shouldPlay={index === activeVideoIndex}
-        isMuted={false}
-      />
+      <TouchableOpacity 
+        activeOpacity={1}
+        onPress={() => handleVideoPress(videoRefs.current[item.id])}
+        style={StyleSheet.absoluteFill}
+      >
+        <Video
+          ref={ref => videoRefs.current[item.id] = ref}
+          source={{ uri: item.url }}
+          style={styles.video}
+          resizeMode="cover"
+          isLooping
+          shouldPlay={index === activeVideoIndex}
+          isMuted={false}
+        />
+      </TouchableOpacity>
+      
       <Animated.View 
-        style={[
-          styles.videoOverlay,
-          { opacity: index === activeVideoIndex ? 1 : 0 }
-        ]}
+        style={[styles.videoOverlay]}
         entering={FadeInUp.springify()}
       >
         <View style={styles.videoInfo}>
@@ -324,22 +337,31 @@ export default function DiscoverScreen() {
             style={styles.interactionButton}
             onPress={() => handleLike(item.id)}
           >
-            <Ionicons 
-              name={item.isLiked ? "heart" : "heart-outline"} 
-              size={28} 
-              color={item.isLiked ? "#FF3B30" : "#FFFFFF"} 
-            />
+            <View style={styles.iconBackground}>
+              <Ionicons 
+                name={item.isLiked ? "heart" : "heart-outline"} 
+                size={32} 
+                color={item.isLiked ? "#FF3B30" : "#FFFFFF"} 
+              />
+            </View>
             <Text style={styles.interactionText}>{item.likes}</Text>
           </TouchableOpacity>
+          
           <TouchableOpacity 
             style={styles.interactionButton} 
             onPress={() => handleComment(item.id)}
           >
-            <Ionicons name="chatbubble" size={26} color="#FFFFFF" />
+            <View style={styles.iconBackground}>
+              <Ionicons name="chatbubble" size={30} color="#FFFFFF" />
+            </View>
             <Text style={styles.interactionText}>{item.comments.length}</Text>
           </TouchableOpacity>
+          
           <TouchableOpacity style={styles.interactionButton}>
-            <Ionicons name="share-social" size={26} color="#FFFFFF" />
+            <View style={styles.iconBackground}>
+              <Ionicons name="share-social" size={30} color="#FFFFFF" />
+            </View>
+            <Text style={styles.interactionText}>Share</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
@@ -361,165 +383,163 @@ export default function DiscoverScreen() {
   ), [isDark]);
 
   const renderPodcast = useCallback(({ item }) => (
-    <View style={[styles.podcastCard, isDark && styles.podcastCardDark]}>
-      <Image source={{ uri: item.coverImage }} style={styles.podcastCover} />
+    <Animated.View
+      entering={FadeInUp.springify()}
+      style={[styles.podcastCard]}>
+      <View style={styles.podcastImageContainer}>
+        <Image 
+          source={{ uri: item.image }} 
+          style={styles.podcastCover}
+          resizeMode="cover"
+        />
+      </View>
       <View style={styles.podcastContent}>
-        <Text style={[styles.podcastTitle, isDark && styles.textDark]}>{item.title}</Text>
+        <Text style={styles.podcastTitle}>{item.title}</Text>
         <Text style={styles.podcastHost}>Hosted by {item.host}</Text>
         <View style={styles.podcastMeta}>
           <Text style={styles.podcastDuration}>{item.duration}</Text>
           <Text style={styles.podcastEpisode}>{item.latestEpisode}</Text>
         </View>
       </View>
-    </View>
-  ), [isDark]);
+    </Animated.View>
+  ), []);
 
   return (
-    <BottomSheetModalProvider>
-      <SafeAreaView style={[styles.container, isDark && styles.containerDark]}>
-        <View style={styles.header}>
-          <Text style={[styles.title, isDark && styles.textDark]}>DISCOVER</Text>
-          <View style={styles.tabsContainer}>
-            <TouchableOpacity
-              onPress={() => setActiveTab('videos')}
-              style={[styles.tab, activeTab === 'videos' && styles.activeTab]}
-            >
-              <Text style={[styles.tabText, activeTab === 'videos' && styles.activeTabText]}>
-                VIDEOS
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setActiveTab('articles')}
-              style={[styles.tab, activeTab === 'articles' && styles.activeTab]}
-            >
-              <Text style={[styles.tabText, activeTab === 'articles' && styles.activeTabText]}>
-                ARTICLES
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setActiveTab('podcasts')}
-              style={[styles.tab, activeTab === 'podcasts' && styles.activeTab]}
-            >
-              <Text style={[styles.tabText, activeTab === 'podcasts' && styles.activeTabText]}>
-                PODCASTS
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {activeTab === 'videos' && (
-          <FlatList
-            ref={flatListRef}
-            data={videos}
-            renderItem={renderVideo}
-            keyExtractor={(item) => item.id}
-            pagingEnabled
-            snapToInterval={height - 140}
-            decelerationRate="fast"
-            showsVerticalScrollIndicator={false}
-            onViewableItemsChanged={onViewableItemsChanged}
-            viewabilityConfig={viewabilityConfig}
-            getItemLayout={(data, index) => ({
-              length: height - 140,
-              offset: (height - 140) * index,
-              index,
-            })}
-            onMomentumScrollEnd={(event) => {
-              const index = Math.floor(event.nativeEvent.contentOffset.y / (height - 140));
-              const video = videos[index];
-              if (video) {
-                const ref = videoRefs.current[video.id];
-                ref?.playAsync();
-              }
-            }}
-          />
-        )}
-
-        {activeTab === 'articles' && (
-          <FlatList
-            data={dummyArticles}
-            renderItem={renderArticle}
-            keyExtractor={(item) => item.id}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.contentContainer}
-          />
-        )}
-
-        {activeTab === 'podcasts' && (
-          <FlatList
-            data={dummyPodcasts}
-            renderItem={renderPodcast}
-            keyExtractor={(item) => item.id}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.contentContainer}
-          />
-        )}
-
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={0}
-          snapPoints={['50%']}
-          enablePanDownToClose={true}
-          backgroundStyle={[styles.bottomSheet, isDark && styles.bottomSheetDark]}
-        >
-          <View style={styles.commentsContainer}>
-            <Text style={[styles.commentsTitle, isDark && styles.textDark]}>COMMENTS</Text>
-            <FlatList
-              data={selectedVideo?.comments || []}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View style={styles.commentItem}>
-                  <Text style={styles.commentUser}>{item.user}</Text>
-                  <Text style={styles.commentText}>{item.text}</Text>
-                  <View style={styles.commentMeta}>
-                    <TouchableOpacity>
-                      <Text style={styles.commentLikes}>{item.likes} likes</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
-              style={styles.commentsList}
-            />
-            <View style={styles.commentInput}>
-              <TextInput
-                style={styles.input}
-                value={newComment}
-                onChangeText={setNewComment}
-                placeholder="Add a comment..."
-                placeholderTextColor="#999"
-              />
-              <TouchableOpacity 
-                style={styles.submitButton}
-                onPress={submitComment}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.title}>DISCOVER</Text>
+            <View style={styles.tabsContainer}>
+              <TouchableOpacity
+                onPress={() => setActiveTab('videos')}
+                style={[styles.tab, activeTab === 'videos' && styles.activeTab]}
               >
-                <Text style={styles.submitButtonText}>Post</Text>
+                <Text style={[styles.tabText, activeTab === 'videos' && styles.activeTabText]}>
+                  VIDEOS
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setActiveTab('articles')}
+                style={[styles.tab, activeTab === 'articles' && styles.activeTab]}
+              >
+                <Text style={[styles.tabText, activeTab === 'articles' && styles.activeTabText]}>
+                  ARTICLES
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setActiveTab('podcasts')}
+                style={[styles.tab, activeTab === 'podcasts' && styles.activeTab]}
+              >
+                <Text style={[styles.tabText, activeTab === 'podcasts' && styles.activeTabText]}>
+                  PODCASTS
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
-        </BottomSheetModal>
-      </SafeAreaView>
-    </BottomSheetModalProvider>
+
+          {activeTab === 'videos' && (
+            <FlatList
+              data={videos}
+              renderItem={renderVideo}
+              keyExtractor={(item) => item.id}
+              pagingEnabled
+              snapToInterval={height - 140}
+              decelerationRate="fast"
+              showsVerticalScrollIndicator={false}
+              onViewableItemsChanged={onViewableItemsChanged}
+              viewabilityConfig={viewabilityConfig}
+              getItemLayout={(data, index) => ({
+                length: height - 140,
+                offset: (height - 140) * index,
+                index,
+              })}
+            />
+          )}
+
+          {activeTab === 'articles' && (
+            <FlatList
+              data={dummyArticles}
+              renderItem={renderArticle}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.contentContainer}
+            />
+          )}
+
+          {activeTab === 'podcasts' && (
+            <FlatList
+              data={dummyPodcasts}
+              renderItem={renderPodcast}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.contentContainer}
+            />
+          )}
+
+          <BottomSheetModal
+            ref={bottomSheetModalRef}
+            index={0}
+            snapPoints={['50%']}
+            enablePanDownToClose={true}
+            backgroundStyle={[styles.bottomSheet, isDark && styles.bottomSheetDark]}
+          >
+            <View style={styles.commentsContainer}>
+              <Text style={[styles.commentsTitle, isDark && styles.textDark]}>COMMENTS</Text>
+              <FlatList
+                data={selectedVideo?.comments || []}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <View style={styles.commentItem}>
+                    <Text style={styles.commentUser}>{item.user}</Text>
+                    <Text style={styles.commentText}>{item.text}</Text>
+                    <View style={styles.commentMeta}>
+                      <TouchableOpacity>
+                        <Text style={styles.commentLikes}>{item.likes} likes</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+                style={styles.commentsList}
+              />
+              <View style={styles.commentInput}>
+                <TextInput
+                  style={styles.input}
+                  value={newComment}
+                  onChangeText={setNewComment}
+                  placeholder="Add a comment..."
+                  placeholderTextColor="#999"
+                />
+                <TouchableOpacity 
+                  style={styles.submitButton}
+                  onPress={submitComment}
+                >
+                  <Text style={styles.submitButtonText}>Post</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </BottomSheetModal>
+        </SafeAreaView>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  containerDark: {
-    backgroundColor: '#000000',
+    backgroundColor: '#121212',
   },
   header: {
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
+    borderBottomColor: '#2A2A2A',
   },
   title: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#000000',
+    color: '#FFFFFF',
     marginBottom: 20,
   },
   tabsContainer: {
@@ -531,7 +551,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginRight: 15,
     borderRadius: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#2A2A2A',
   },
   activeTab: {
     backgroundColor: '#E31837',
@@ -539,10 +559,59 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666666',
+    color: '#A0A0A0',
   },
   activeTabText: {
     color: '#FFFFFF',
+  },
+  podcastCard: {
+    backgroundColor: '#1E1E1E',
+    borderRadius: 12,
+    marginBottom: 20,
+    shadowColor: '#000000',
+    shadowRadius: 8,
+    elevation: 4,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    height: 120,
+  },
+  podcastImageContainer: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#2A2A2A',
+  },
+  podcastCover: {
+    width: '100%',
+    height: '100%',
+  },
+  podcastContent: {
+    flex: 1,
+    padding: 15,
+    justifyContent: 'center',
+  },
+  podcastTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  podcastHost: {
+    fontSize: 14,
+    color: '#A0A0A0',
+    marginBottom: 8,
+  },
+  podcastMeta: {
+    flexDirection: 'column',
+  },
+  podcastDuration: {
+    color: '#FF3B30',
+    fontWeight: '600',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  podcastEpisode: {
+    color: '#A0A0A0',
+    fontSize: 13,
   },
   videoContainer: {
     width: width,
@@ -555,14 +624,15 @@ const styles = StyleSheet.create({
   },
   videoOverlay: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     padding: 20,
     paddingBottom: 100,
     backgroundColor: 'rgba(0,0,0,0.3)',
   },
   videoInfo: {
-    width: '100%',
+    marginTop: 'auto',
     marginBottom: 20,
+    paddingRight: 80,
   },
   videoTitle: {
     color: '#FFFFFF',
@@ -577,6 +647,33 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     marginBottom: 16,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  interactionButtons: {
+    position: 'absolute',
+    right: 16,
+    bottom: 120,
+    alignItems: 'center',
+  },
+  interactionButton: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  iconBackground: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  interactionText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
@@ -630,21 +727,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
-  },
-  interactionButtons: {
-    position: 'absolute',
-    right: 20,
-    bottom: 20,
-    zIndex: 2,
-  },
-  interactionButton: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  interactionText: {
-    color: '#FFFFFF',
-    marginTop: 4,
-    fontSize: 12,
   },
   bottomSheet: {
     backgroundColor: '#FFFFFF',
@@ -766,50 +848,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666666',
   },
-  podcastCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    marginBottom: 20,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  podcastCardDark: {
-    backgroundColor: '#1C1C1E',
-  },
-  podcastCover: {
-    width: '100%',
-    height: 200,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  podcastContent: {
-    padding: 15,
-  },
-  podcastTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  podcastHost: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 8,
-  },
-  podcastMeta: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  podcastDuration: {
-    fontSize: 12,
-    color: '#666666',
-  },
-  podcastEpisode: {
-    fontSize: 12,
-    color: '#E31837',
-    fontWeight: '600',
-  }
-});
+}
+  )

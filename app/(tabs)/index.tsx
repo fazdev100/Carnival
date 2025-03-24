@@ -38,7 +38,7 @@ const dummyArticles = [
   {
     id: '3',
     brand: 'INSTYLE',
-    title: 'Spring Fashion Trends That Will Dominate 2024',
+    title: 'Spring Fashion Trends That Will Dominate 2025',
     image: 'https://assets.vogue.com/photos/65cfb6e3c838846cb84b384b/1:1/w_1280,h_1280,c_limit/ss24_collage_cover.jpg',
     category: 'Fashion',
     readTime: '6 min read',
@@ -84,7 +84,7 @@ const dummyArticles = [
     id: '16',
     brand: 'BRIDES',
     title: 'Bridal Beauty: Tips for Your Big Day',
-    image: 'https://images.unsplash.com/photo-1521805103420-1f3b9c5c2a4f?w=800&auto=format&fit=crop',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZV-wgeOqEM7T7qMRN2t9LdcFArMOX_yOpvQ&s',
     category: 'Weddings',
     readTime: '4 min read',
     type: 'podcast'
@@ -93,7 +93,7 @@ const dummyArticles = [
     id: '7',
     brand: 'PEOPLE',
     title: 'Celebrity Fashion: Best and Worst Dressed',
-    image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&auto=format&fit=crop',
+    image: 'https://www.instyle.com/thmb/1HaJ6wu3uHFPKlvc_3pM2w9Ry8Y=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/bestdressed-grammys-2024-tout-4e4c3714373d4d10a0c6a74f1747bb3c.jpg',
     category: 'Fashion',
     readTime: '5 min read',
     type: 'article'
